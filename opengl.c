@@ -19,21 +19,77 @@ void refreshFunc(GLFWwindow* window) {
 
 	glfwSwapBuffers(window);
 }
-int a = 1;
-void escapeKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+GLfloat color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+void colorPlusMinus(int plus, int index) {
+	if (plus == 0) {
+		color[index] += 0.1;
+		if (color[index] >= 1.0f) color[index] = 1.0f;
+	}
+	else {
+		color[index] -= 0.1;
+		if (color[index] <= 0.0f) color[index] = 0.0f;
+	}
+}
+
+void glClearColorByLocalColor() {
+	glClearColor(color[0], color[1], color[2], color[3]);
+}
+
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	switch (key) {
 	case GLFW_KEY_ESCAPE:
 		if (action == GLFW_PRESS) {
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
 		break;
-	
-	case GLFW_KEY_A:
+
+	case GLFW_KEY_Q:
 		if (action == GLFW_PRESS) {
-			printf("a pushed\n");
-			fflush(stdout);
+			colorPlusMinus(0, 0);
 		}
 		break;
+
+	case GLFW_KEY_W:
+		if (action == GLFW_PRESS) {
+			colorPlusMinus(0, 1);
+		}
+		break;
+
+	case GLFW_KEY_E:
+		if (action == GLFW_PRESS) {
+			colorPlusMinus(0, 2);
+		}
+		break;
+
+	case GLFW_KEY_A:
+		if (action == GLFW_PRESS) {
+			colorPlusMinus(1, 0);
+		}
+		break;
+
+	case GLFW_KEY_S:
+		if (action == GLFW_PRESS) {
+			colorPlusMinus(1, 1);
+		}
+		break;
+
+	case GLFW_KEY_D:
+		if (action == GLFW_PRESS) {
+			colorPlusMinus(1, 2);
+		}
+		break;
+	}
+	glClearColorByLocalColor();
+}
+
+void mouseCallback(GLFWwindow* window, int button, int action, int mods) {
+	switch (button) {
+	case GLFW_MOUSE_BUTTON_LEFT:
+		if (action == GLFW_PRESS) {
+			printf("LEFT CLICK\n");
+			fflush(stdout);
+		}
 	}
 }
 
@@ -52,9 +108,10 @@ int main(int argc, char* argv[]) {
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 	glfwSetWindowRefreshCallback(window, refreshFunc); 
-	glfwSetKeyCallback(window, escapeKeyCallback);
-	glClearColor(0.5F, 0.8F, 0.8F, 0.8F);
-
+	glfwSetKeyCallback(window, keyCallback);
+	glfwSetMouseButtonCallback(window, mouseCallback);
+	glClearColorByLocalColor();
+	
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT);
 		glFinish();
